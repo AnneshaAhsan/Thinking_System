@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Understanding Coherence, Plausibility & Probability</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.2em;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #7f8c8d;
+        margin-bottom: 40px;
+        font-style: italic;
+      }
+
+      .concept-section {
+        margin: 30px 0;
+        padding: 25px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-left: 5px solid;
+      }
+
+      .coherence {
+        background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+        border-left-color: #e17055;
+      }
+
+      .plausibility {
+        background: linear-gradient(135deg, #a8e6cf, #7fcdcd);
+        border-left-color: #00b894;
+      }
+
+      .probability {
+        background: linear-gradient(135deg, #dda0dd, #b19cd9);
+        border-left-color: #6c5ce7;
+      }
+
+      .concept-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .concept-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      .system-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .system1 {
+        background: #ff7675;
+        color: white;
+      }
+
+      .system2 {
+        background: #74b9ff;
+        color: white;
+      }
+
+      .example-box {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border-left: 3px solid #3498db;
+      }
+
+      .interactive-demo {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border: 2px dashed #6c5ce7;
+      }
+
+      .demo-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+
+      .scenario {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .evaluation-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .eval-item {
+        text-align: center;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+
+      .high {
+        background: #00b894;
+        color: white;
+      }
+      .medium {
+        background: #fdcb6e;
+        color: #2c3e50;
+      }
+      .low {
+        background: #e17055;
+        color: white;
+      }
+
+      .thinking-process {
+        background: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .process-step {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 6px;
+      }
+
+      .step-number {
+        background: #3498db;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-weight: bold;
+      }
+
+      .key-insight {
+        background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border-left: 5px solid #e17055;
+      }
+
+      .insight-title {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin: 10px 5px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .revealed {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Understanding Our Thinking System</h1>
+      <p class="subtitle">
+        How We Evaluate Coherence, Plausibility & Probability
+      </p>
+
+      <div class="key-insight">
+        <div class="insight-title">Kahneman's Framework</div>
+        Our minds operate through two systems: System 1 (fast, intuitive,
+        automatic) and System 2 (slow, deliberate, effortful). Understanding how
+        these systems evaluate coherence, plausibility, and probability is key
+        to understanding human reasoning.
+      </div>
+
+      <div
+        class="concept-section coherence"
+        onclick="toggleSection('coherence-detail')"
+      >
+        <div class="concept-title">🔗 Coherence</div>
+        <div class="system-badge system1">System 1 Dominant</div>
+        <p>
+          <strong>Definition:</strong> How well ideas fit together and make
+          sense as a unified whole.
+        </p>
+        <p><em>Click to explore...</em></p>
+      </div>
+
+      <div id="coherence-detail" class="hidden">
+        <div class="example-box">
+          <strong>System 1 in Action:</strong> When you hear "banker,
+          conservative, plays golf," your mind instantly creates a coherent
+          story. System 1 loves patterns and will create coherence even from
+          limited information.
+        </div>
+
+        <div class="thinking-process">
+          <h4>How Coherence Works:</h4>
+          <div class="process-step">
+            <div class="step-number">1</div>
+            <div>System 1 rapidly connects available information</div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">2</div>
+            <div>Creates a "good story" that feels complete</div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">3</div>
+            <div>
+              Ignores missing information (WYSIATI - What You See Is All There
+              Is)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="concept-section plausibility"
+        onclick="toggleSection('plausibility-detail')"
+      >
+        <div class="concept-title">🎯 Plausibility</div>
+        <div class="system-badge system1">System 1 Primary</div>
+        <div class="system-badge system2">System 2 Secondary</div>
+        <p>
+          <strong>Definition:</strong> How believable or reasonable something
+          seems based on our existing knowledge and experience.
+        </p>
+        <p><em>Click to explore...</em></p>
+      </div>
+
+      <div id="plausibility-detail" class="hidden">
+        <div class="example-box">
+          <strong>Availability Heuristic:</strong> We judge plausibility by how
+          easily we can recall similar examples. Recent plane crashes make
+          flying seem less plausible as "safe," even though statistics show
+          otherwise.
+        </div>
+
+        <div class="thinking-process">
+          <h4>Plausibility Assessment:</h4>
+          <div class="process-step">
+            <div class="step-number">1</div>
+            <div>System 1 checks against familiar patterns and experiences</div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">2</div>
+            <div>
+              Uses representativeness heuristic (does this match our
+              stereotype?)
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">3</div>
+            <div>
+              System 2 may override with deliberate analysis (if engaged)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="concept-section probability"
+        onclick="toggleSection('probability-detail')"
+      >
+        <div class="concept-title">📊 Probability</div>
+        <div class="system-badge system2">System 2 Dominant</div>
+        <p>
+          <strong>Definition:</strong> The mathematical likelihood that
+          something will occur, based on statistical reasoning.
+        </p>
+        <p><em>Click to explore...</em></p>
+      </div>
+
+      <div id="probability-detail" class="hidden">
+        <div class="example-box">
+          <strong>The Conjunction Fallacy:</strong> "Linda is a bank teller and
+          feminist" seems more probable than "Linda is a bank teller" because
+          it's more coherent with our mental model—but it's statistically
+          impossible.
+        </div>
+
+        <div class="thinking-process">
+          <h4>Probability Reasoning:</h4>
+          <div class="process-step">
+            <div class="step-number">1</div>
+            <div>Requires System 2's deliberate, statistical thinking</div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">2</div>
+            <div>Often overridden by System 1's coherence and plausibility</div>
+          </div>
+          <div class="process-step">
+            <div class="step-number">3</div>
+            <div>Needs conscious effort to apply correctly</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <div class="demo-title">🧠 Interactive Demo: Analyze This Scenario</div>
+        <div class="scenario">
+          <p>
+            <strong>Scenario:</strong> "Steve is very shy and withdrawn,
+            invariably helpful but with little interest in people or in the
+            world of reality. A meek and tidy soul, he has a need for order and
+            structure, and a passion for detail."
+          </p>
+          <p>
+            <strong>Question:</strong> Is Steve more likely to be a librarian or
+            a farmer?
+          </p>
+
+          <button onclick="showAnalysis()">Reveal Analysis</button>
+
+          <div id="analysis" class="hidden">
+            <div class="evaluation-grid">
+              <div class="eval-item high">
+                <div>Coherence</div>
+                <div>HIGH</div>
+              </div>
+              <div class="eval-item high">
+                <div>Plausibility</div>
+                <div>HIGH</div>
+              </div>
+              <div class="eval-item low">
+                <div>Probability</div>
+                <div>LOW</div>
+              </div>
+            </div>
+
+            <div class="thinking-process">
+              <h4>What's Happening:</h4>
+              <div class="process-step">
+                <div class="step-number">1</div>
+                <div>
+                  <strong>System 1:</strong> "Shy, detail-oriented = librarian
+                  stereotype" (High coherence & plausibility)
+                </div>
+              </div>
+              <div class="process-step">
+                <div class="step-number">2</div>
+                <div>
+                  <strong>System 2 Reality:</strong> There are ~20x more farmers
+                  than librarians
+                </div>
+              </div>
+              <div class="process-step">
+                <div class="step-number">3</div>
+                <div>
+                  <strong>Result:</strong> Most people choose librarian despite
+                  statistical reality
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="key-insight">
+        <div class="insight-title">🎯 Key Takeaway</div>
+        <p>
+          System 1 prioritizes <strong>coherence</strong> and
+          <strong>plausibility</strong> over actual
+          <strong>probability</strong>. This creates compelling narratives but
+          can lead to systematic errors in judgment. Effective thinking requires
+          knowing when to engage System 2's more careful statistical reasoning.
+        </p>
+
+        <div style="margin-top: 15px">
+          <strong>The Hierarchy in Our Minds:</strong>
+          <br />1. Coherence (Does it make a good story?) <br />2. Plausibility
+          (Does it feel believable?) <br />3. Probability (What do the numbers
+          actually say?)
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <div class="demo-title">🔍 Practice Scenarios</div>
+        <button onclick="showScenario(1)">Medical Diagnosis</button>
+        <button onclick="showScenario(2)">Business Decision</button>
+        <button onclick="showScenario(3)">Personal Judgment</button>
+
+        <div id="scenario1" class="hidden scenario">
+          <h4>Medical Diagnosis</h4>
+          <p>
+            <strong>Situation:</strong> A patient has a rare symptom. Two
+            explanations: common cold (boring but statistically likely) vs. rare
+            tropical disease (exciting and fits the unusual symptom perfectly).
+          </p>
+          <p>
+            <strong>System 1:</strong> Favors the rare disease (high coherence
+            with unusual symptom)
+          </p>
+          <p>
+            <strong>System 2:</strong> Considers base rates—common conditions
+            are common
+          </p>
+          <p>
+            <strong>Lesson:</strong> "When you hear hoofbeats, think horses, not
+            zebras"
+          </p>
+        </div>
+
+        <div id="scenario2" class="hidden scenario">
+          <h4>Business Decision</h4>
+          <p>
+            <strong>Situation:</strong> Choosing between a well-researched but
+            boring strategy vs. an innovative approach with a compelling story.
+          </p>
+          <p>
+            <strong>System 1:</strong> Attracted to the coherent innovation
+            narrative
+          </p>
+          <p>
+            <strong>System 2:</strong> Weighs actual success probabilities and
+            risk factors
+          </p>
+          <p>
+            <strong>Lesson:</strong> Great stories don't always make great
+            strategies
+          </p>
+        </div>
+
+        <div id="scenario3" class="hidden scenario">
+          <h4>Personal Judgment</h4>
+          <p>
+            <strong>Situation:</strong> Meeting someone new who fits perfectly
+            into a stereotype you hold.
+          </p>
+          <p>
+            <strong>System 1:</strong> Creates coherent impression based on
+            limited cues
+          </p>
+          <p>
+            <strong>System 2:</strong> Considers individual differences and
+            witholds judgment
+          </p>
+          <p>
+            <strong>Lesson:</strong> First impressions are coherent but not
+            necessarily accurate
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleSection(id) {
+        const element = document.getElementById(id);
+        if (element.classList.contains("hidden")) {
+          element.classList.remove("hidden");
+          element.classList.add("revealed");
+        } else {
+          element.classList.add("hidden");
+          element.classList.remove("revealed");
+        }
+      }
+
+      function showAnalysis() {
+        const analysis = document.getElementById("analysis");
+        analysis.classList.remove("hidden");
+        analysis.classList.add("revealed");
+      }
+
+      function showScenario(num) {
+        // Hide all scenarios
+        for (let i = 1; i <= 3; i++) {
+          const scenario = document.getElementById("scenario" + i);
+          if (scenario) {
+            scenario.classList.add("hidden");
+          }
+        }
+
+        // Show selected scenario
+        const selected = document.getElementById("scenario" + num);
+        if (selected) {
+          selected.classList.remove("hidden");
+          selected.classList.add("revealed");
+        }
+      }
+    </script>
+  </body>
+</html>
